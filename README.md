@@ -16,5 +16,7 @@ I plan to modify and add functionality as I learn more,
  3) Add machine learning methods
 
 Kyle Strand
+
 ktstrandphd@gmail.com
+
 10 Apr 2023
