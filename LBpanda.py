@@ -77,7 +77,7 @@ def Stream():
 def Iteration():
     global rho
     for i in range(xdim):
-        rho[i] = f[0][i] + f[1][i] + f[2][i]           #Set densities at each iteration. This can probably be done without for loop
+        rho[i] = f.iloc[i].sum()                       #Set densities at each iteration. This can probably be done without for loop
     Collision()                                        #Perform collision step
     Stream()                                           #Perform streaming step  
     global iterations                                   
@@ -92,6 +92,8 @@ def PlotData():
     ax.plot(t,s)
     plt.xlim(0,xdim)
     plt.ylim(-10,210)
+    plt.xlabel("Lattice Position")
+    plt.gca().set_ylabel(r'$\rho$')
     plt.show()
 
 
