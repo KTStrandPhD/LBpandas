@@ -10,7 +10,7 @@ This simulation is currently implemented as a simple one dimensional diffusive s
 
 I plan to modify and add functionality as I learn more,
 
-DISCLAIMER: This code is not intended for any practical simulation implementation due to the fact that it is very slow. It is only meant to be a playground for learning data science techniques in a novel manner 
+DISCLAIMER: This code is not intended for any practical simulation implementation due to the fact that it is very slow. It is only meant to be a playground for learning data science techniques in a novel manner.
 
 #### Planned Improvements ####
  1) Remove need for global variables
@@ -21,4 +21,4 @@ Kyle Strand
 
 ktstrandphd@gmail.com
 
-10 Apr 2023
+11 Apr 2023
