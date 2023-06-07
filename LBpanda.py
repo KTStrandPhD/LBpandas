@@ -1,4 +1,21 @@
-#!/usr/bin/env python
+#Simple diffusive lattice Boltzmann using Pandas data structures
+
+#This was written to test my ability to implement and manipulate pandas data structures
+#This simulation is extremely slow as compared to writing this in C, however, this version implements modern data science techniques
+#and is designed to be used as a learning tool. It does imply basic knowledge of the lattice Boltzmann method.
+
+#This simulation is currently implemented as a simple one dimensional diffusive system.
+
+#I plan to modify and add functionality as I learn more,
+
+#### Improvements ####
+# 1) Remove need for global variables
+# 2) Generalize to multi-dimensions
+# 3) Add machine learning methods
+
+# Kyle Strand
+# ktstrandphd@gmail.com
+# 11 Apr 2023#!/usr/bin/env python
 
 #Simple diffusive lattice Boltzmann using Pandas data structures
 
@@ -41,43 +58,44 @@ f = pd.DataFrame(np.arange(V*xdim).reshape(xdim,V),     #multi-dimensional array
 #Calculates array of weights
 def SetWeights():
     global w
-    w[0] = 1 - theta
-    w[1:3] = theta/2
+    w.iloc[0] = 1 - theta
+    w.iloc[1:3] = theta/2
     
 #Initializes simulation
 def Initialize():
     print("Initializing...\n")
     global f, rho
-    iterations = 0                                     #Resets iterations to 0
+    iterations = 0                                       #Resets iterations to 0
     SetWeights()
     for i in range(xdim):
-        rho[i] = n0*(1. + np.sin(2*3.14159*i/xdim))    #Initial densities in form of sine wave
-        #if i < xdim/2:                                #Initial densities as step function
-        #    rho[i] = 2*n0
+        rho.iloc[i] = n0*(1. + np.sin(2*3.14159*i/xdim)) #sine wave initial density
+        #if i < xdim/2                                   #uncomment for step function initial density
+        #    rho.iloc[i] = 2*n0
         #else:
-        #    rho[i] = 0
-        f.loc[i,0] = rho[i] * w[0]                     #Setting initial distribution functions as 
-        f.loc[i,1:3] = rho[i] * w[1]
+        #    rho.iloc[i] = 0
+        f.iloc[i,0] = rho.iloc[i] * w.iloc[0]
+        f.iloc[i,1:3] = rho.iloc[i] * w.iloc[1]
 
 #Calculates collision step
 def Collision():
     global f
-    for i in range(xdim):
-        f[0][i] += 1./tau*(rho[i]*w[0] - f[0][i])      #Rearranging distribution functions due to collisions
-        f[1][i] += 1./tau*(rho[i]*w[1] - f[1][i])
-        f[2][i] += 1./tau*(rho[i]*w[2] - f[2][i])
+    for a in range(V):
+        for i in range(xdim):
+            f.iloc[i,a] += 1./tau*(rho.iloc[i]*w.iloc[a] - f.iloc[i,a])#Rearranging distribution functions due to collisions
 
 #Move particles as defined by the velocity set
+#Periodic shifting of distribution functions by 1 position
+#f[1] moves right, f[2] moves left
 def Stream():
     global f
-    f[1] = f[1].shift(1, fill_value=f[1][xdim-1])      #Periodic shifting of distribution functions by 1 position
-    f[2] = f[2].shift(-1, fill_value=f[2][0])          #f[1] moves right, f[2] moves left
-
+    f.iloc[:,1] = f.iloc[:,1].shift(1, fill_value=f.iloc[xdim-1,1])  
+    f.iloc[:,2] = f.iloc[:,2].shift(-1, fill_value=f.iloc[0,2])   
+    
 #Recursive algorithm
 def Iteration():
     global rho
-    for i in range(xdim):
-        rho[i] = f.iloc[i].sum()                       #Set densities at each iteration. This can probably be done without for loop
+    for i in range(xdim):     #Set densities at each iteration. This can probably be done without for loop
+        rho[i] = f.iloc[i].sum()
     Collision()                                        #Perform collision step
     Stream()                                           #Perform streaming step  
     global iterations                                   
